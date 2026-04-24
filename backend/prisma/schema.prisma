@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String        @map("password_hash")
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  subscription Subscription?
+  searches     Search[]
+  leads        Lead[]
+  webhooks     Webhook[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id               String    @id @default(uuid())
+  userId           String    @unique @map("user_id")
+  stripeCustomerId String    @unique @map("stripe_customer_id")
+  stripeSubId      String    @unique @map("stripe_sub_id")
+  plan             Plan
+  status           SubStatus
+  leadsLimit       Int       @map("leads_limit")
+  leadsUsed        Int       @default(0) @map("leads_used")
+  renewsAt         DateTime? @map("renews_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Search {
+  id        String       @id @default(uuid())
+  userId    String       @map("user_id")
+  input     String
+  status    SearchStatus @default(PENDING)
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leads     Lead[]
+
+  @@map("searches")
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  searchId    String   @map("search_id")
+  userId      String   @map("user_id")
+  fullName    String?  @map("full_name")
+  email       String?
+  emailValid  Boolean? @map("email_valid")
+  jobTitle    String?  @map("job_title")
+  company     String?
+  companySize String?  @map("company_size")
+  linkedinUrl String?  @map("linkedin_url")
+  phone       String?
+  source      String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  search      Search   @relation(fields: [searchId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("leads")
+}
+
+model Webhook {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  targetUrl String   @map("target_url")
+  secret    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("webhooks")
+}
+
+enum Plan {
+  STARTER
+  PRO
+}
+
+enum SubStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+}
+
+enum SearchStatus {
+  PENDING
+  DONE
+  FAILED
+}

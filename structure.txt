@@ -1,0 +1,47 @@
+leadpulse/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── env.ts
+│   │   ├── middleware/
+│   │   │   ├── auth.ts
+│   │   │   └── quota.ts
+│   │   ├── routes/
+│   │   │   ├── auth.ts
+│   │   │   ├── billing.ts
+│   │   │   ├── searches.ts
+│   │   │   ├── webhooks.ts
+│   │   │   └── me.ts
+│   │   ├── services/
+│   │   │   ├── hunter.ts
+│   │   │   ├── clearbit.ts
+│   │   │   ├── emailVerifier.ts
+│   │   │   └── leadOrchestrator.ts
+│   │   ├── jobs/
+│   │   │   └── searchJob.ts
+│   │   └── index.ts
+│   ├── prisma/
+│   │   └── schema.prisma
+│   ├── .env.example
+│   ├── package.json
+│   └── tsconfig.json
+│
+└── frontend/
+    ├── src/
+    │   ├── api/
+    │   │   └── client.ts
+    │   ├── pages/
+    │   │   ├── Login.tsx
+    │   │   ├── Register.tsx
+    │   │   ├── Dashboard.tsx
+    │   │   └── Pricing.tsx
+    │   ├── components/
+    │   │   ├── QuotaBar.tsx
+    │   │   ├── LeadTable.tsx
+    │   │   └── SearchInput.tsx
+    │   ├── hooks/
+    │   │   └── usePolling.ts
+    │   ├── App.tsx
+    │   └── main.tsx
+    ├── .env.example
+    └── package.json
